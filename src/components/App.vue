@@ -3,25 +3,38 @@
         <ActionBar class="action-bar" title="Rick and Morty">
         </ActionBar>
 
-        <StackLayout class="hello-world">
+        <FlexboxLayout flexDirection="column" justifyContent="space-between">
             <StackLayout orientation="horizontal" height="10%">
-                <SearchBar v-model="filters.name" :text="listOfNames" hint="Select name..."/>
+                <SearchBar v-model="filters.name" @submit="getCharacters" :text="listOfNames" hint="Type a name..."/>
             </StackLayout>
-            <StackLayout orientation="horizontal" height="50" width="100%">
-                <Button class="k-primary" @tap="getCharacters">Search</Button>
-                <Button v-if="response.info.prev" @tap="getPrev"> Prev</Button>
-                <Button v-if="response.info.next" @tap="getNext"> Next</Button>
+
+            <StackLayout orientation="vertical" height="5%">
             </StackLayout>
-            <StackLayout orientation="horizontal" height="30%">
+
+            <StackLayout orientation="vertical" class="status" v-show="isLoading" height="70%">
+              <Label text="Loading..."/>
             </StackLayout>
-            <ScrollView orientation="horizontal" height="50%">
-                <StackLayout orientation="horizontal">
-                    <StackLayout v-for="(item, index) in response.results" :key="index">
+
+            <ScrollView orientation="vertical" height="70%">
+                <StackLayout orientation="vertical" v-show="!isLoading">
+                    <StackLayout class="response" v-for="(item, index) in response.results" :key="index">
                         <Image :src="item.image" height="80%"/>
+                        <Label :text="item.name"></Label>
                     </StackLayout>
                 </StackLayout>
             </ScrollView>
-        </StackLayout>
+
+            <StackLayout height="10%">
+            </StackLayout>
+
+            <FlexboxLayout justifyContent="center" v-show="!isLoading">
+                <Button v-show="response.info.prev" @tap="getPrev">Prev</Button>
+                <Button v-show="response.info.next" @tap="getNext">Next</Button>
+            </FlexboxLayout>
+
+            <StackLayout height="5%">
+            </StackLayout>
+        </FlexboxLayout>
     </Page>
 </template>
 
@@ -32,6 +45,7 @@
     data () {
       return {
         listOfNames: [],
+        isLoading: false,
 
         filters: {
           name: ''
@@ -52,12 +66,16 @@
 
     methods: {
       getCharacters (url) {
+        this.isLoading = true
         const apiCall = url && typeof url === 'string'
           ? api.getCharactersByUrl(url)
           : api.getCharactersByName(this.filters.name)
 
         return apiCall
-            .then(res => (this.response = res))
+            .then(res => {
+              this.response = res
+              this.isLoading = false
+            })
             .catch(err => alert({ message: 'Something went wrong!', okButtonText: 'Close' }))
       },
 
@@ -74,12 +92,29 @@
   }
 </script>
 
-<style scoped>
-    .hello-world {
-        margin: 20;
-    }
+<style lang="scss" scoped>
+  .response {
+    margin-bottom: 30px;
+    text-align: center;
+    padding: 40px;
+  }
 
+  .status {
+    text-align: center;
+    font-size: 30px;
     Label {
-        color: red;
+      color: tomato;
     }
+  }
+
+  Label {
+    color: #3d3d3d;
+    font-weight: bold;
+  }
+
+  Button {
+    padding: 10px;
+    margin-left: 10px;
+    width: 100px;
+  }
 </style>
