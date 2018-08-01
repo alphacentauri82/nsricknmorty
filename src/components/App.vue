@@ -57,8 +57,8 @@
           : api.getCharactersByName(this.filters.name)
 
         return apiCall
-            .then(res => ( this.response = res ))
-            .catch(e => { console.log('\n\n\n', e.data, '\n\n\n') })
+            .then(res => (this.response = res))
+            .catch(err => alert({ message: 'Something went wrong!', okButtonText: 'Close' }))
       },
 
       getNext () {
