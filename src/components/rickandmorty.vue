@@ -8,7 +8,7 @@
                 <SearchBar v-model="filters.name" :text="listOfNames" hint="Select name..."/>
             </StackLayout>
             <StackLayout orientation="horizontal" height="50" width="100%">
-                <Button class="k-primary" @tap="apiCall()">Search</Button>
+                <Button class="k-primary" @tap="getCharacters">Search</Button>
                 <Button v-if="!(ApiResponse.info.prev === '')" @tap="apiCall(ApiResponse.info.prev)"> Prev</Button>
                 <Button v-if="!(ApiResponse.info.next === '')" @tap="apiCall(ApiResponse.info.next)"> Next</Button>
             </StackLayout>
@@ -26,19 +26,17 @@
 </template>
 
 <script>
-  const configApi = {
-    url: 'https://rickandmortyapi.com/api/'
-  }
-  const httpModule = require('http')
+  import api from '../api'
 
   export default {
     data () {
       return {
-        urlBase: configApi.url,
         listOfNames: [],
+
         filters: {
           name: ''
         },
+
         ApiResponse: {
           info: {
             next: '',
@@ -47,23 +45,19 @@
         }
       }
     },
-    mounted () {
-      this.apiCall()
+
+    created () {
+      this.getCharacters()
     },
+
     methods: {
-      apiCall (url = null) {
-        let me = this
-        let extraUrl = (this.filters.name) ? this.urlBase + 'character/?name=' + this.filters.name : this.urlBase + 'character/'
-        let callUrl = (url) ? url : extraUrl
-        httpModule.request({
-          url: callUrl,
-          method: 'GET'
-        }).then((response) => {
-          me.ApiResponse = response.content.toJSON()
-          console.log(me.ApiResponse.info.next)
-        }, (e) => {
-          console.log(e.data)
-        })
+      getCharacters () {
+        return api.getCharacters(this.filters.name)
+          .then(res => {
+            this.ApiResponse = res
+            console.log(res)
+          })
+          .catch(e => { console.log('\n\n\n', e.data, '\n\n\n') })
       }
     }
   }
