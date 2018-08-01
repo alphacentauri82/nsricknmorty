@@ -1,16 +1,11 @@
-import Vue from 'nativescript-vue';
+import Vue from 'nativescript-vue'
+import App from './components/App'
 
-import HelloWorld from './components/rickandmorty';
-
-
-import './styles.scss';
+import './styles.scss'
 
 // Uncommment the following to see NativeScript-Vue output logs
-Vue.config.silent = false;
+Vue.config.silent = false
 
 new Vue({
-
-  render: h => h(HelloWorld),
-
-
-}).$start();
+  render: h => h(App),
+}).$start()

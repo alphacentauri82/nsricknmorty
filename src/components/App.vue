@@ -9,14 +9,14 @@
             </StackLayout>
             <StackLayout orientation="horizontal" height="50" width="100%">
                 <Button class="k-primary" @tap="getCharacters">Search</Button>
-                <Button v-if="!(ApiResponse.info.prev === '')" @tap="apiCall(ApiResponse.info.prev)"> Prev</Button>
-                <Button v-if="!(ApiResponse.info.next === '')" @tap="apiCall(ApiResponse.info.next)"> Next</Button>
+                <Button v-if="response.info.prev" @tap="getPrev"> Prev</Button>
+                <Button v-if="response.info.next" @tap="getNext"> Next</Button>
             </StackLayout>
             <StackLayout orientation="horizontal" height="30%">
             </StackLayout>
             <ScrollView orientation="horizontal" height="50%">
                 <StackLayout orientation="horizontal">
-                    <StackLayout v-for="(item, index) in ApiResponse.results" :key="index">
+                    <StackLayout v-for="(item, index) in response.results" :key="index">
                         <Image :src="item.image" height="80%"/>
                     </StackLayout>
                 </StackLayout>
@@ -37,7 +37,7 @@
           name: ''
         },
 
-        ApiResponse: {
+        response: {
           info: {
             next: '',
             prev: ''
@@ -51,13 +51,24 @@
     },
 
     methods: {
-      getCharacters () {
-        return api.getCharacters(this.filters.name)
-          .then(res => {
-            this.ApiResponse = res
-            console.log(res)
-          })
-          .catch(e => { console.log('\n\n\n', e.data, '\n\n\n') })
+      getCharacters (url) {
+        const apiCall = url && typeof url === 'string'
+          ? api.getCharactersByUrl(url)
+          : api.getCharactersByName(this.filters.name)
+
+        return apiCall
+            .then(res => ( this.response = res ))
+            .catch(e => { console.log('\n\n\n', e.data, '\n\n\n') })
+      },
+
+      getNext () {
+        if (!this.response.info.next) { return }
+        return this.getCharacters(this.response.info.next)
+      },
+
+      getPrev () {
+        if (!this.response.info.prev) { return }
+        return this.getCharacters(this.response.info.prev)
       }
     }
   }
