@@ -11,9 +11,9 @@
             <StackLayout orientation="vertical" height="5%">
             </StackLayout>
 
-            <StackLayout orientation="vertical" class="status" v-show="isLoading" height="70%">
-              <Label text="Loading..."/>
-            </StackLayout>
+            <FlexboxLayout alignConent="center" justifyContent="center" class="status" v-show="isLoading" height="70%">
+              <Label text="..." class="blinker" />
+            </FlexboxLayout>
 
             <ScrollView orientation="vertical" height="70%">
                 <StackLayout orientation="vertical" v-show="!isLoading">
@@ -101,10 +101,19 @@
 
   .status {
     text-align: center;
-    font-size: 30px;
+    font-size: 40px;
     Label {
       color: tomato;
     }
+  }
+
+  .blink {
+    animation: blinker 1s linear infinite;
+  }
+
+  @keyframes blinker {
+    from { opacity: 0; }
+    to { opacity: 1; }
   }
 
   Label {
