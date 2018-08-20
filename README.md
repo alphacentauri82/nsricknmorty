@@ -1,6 +1,6 @@
 # Rick And Morty App
 
-> Example sample api rest vue for workshop
+> Example sample api rest vue for workshop - BEAUTIFIED!
 
 ## Usage
 
